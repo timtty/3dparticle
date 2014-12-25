@@ -67,19 +67,16 @@ public class Particle3DSystem implements ApplicationListener {
         */
 
         for (int i = 0; i < particles.size(); i++) {
-            Particle3D particle = particles.get(i);
-            //logger.log(Level.INFO, "" + particle.X_PULL);
-            if (particle.duration < 5f) {
-                particle.Update();
+            if (particles.get(i).duration < 5f) {
+                particles.get(i).Update();
 
-                environment.add(particle.light);
+                //environment.add(particle.light);
 
                 renderer.begin(cam);
-                renderer.render(particle.instance, environment);
+                renderer.render(particles.get(i).instance, environment);
                 renderer.end();
             } else {
-                particle.destroy();
-                particle = null;
+                particles.get(i).destroy();
                 particles.remove(i);
             }
         }
@@ -87,11 +84,11 @@ public class Particle3DSystem implements ApplicationListener {
         SIZE = (new Random().nextFloat() / 2);
 
         if (particles.size() < 500) {
-            for (int ii = 0; ii < 2; ii++) {
+            for (int ii = 0; ii < 30; ii++) {
                 particles.add(new Particle3D(ORIGIN, SIZE, builder, shape));
             }
         } else {
-            for (int ii = 0; ii < 1; ii++) {
+            for (int ii = 0; ii < 20; ii++) {
                 particles.add(new Particle3D(ORIGIN, SIZE, builder, shape));
             }
         }

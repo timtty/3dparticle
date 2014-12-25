@@ -187,10 +187,6 @@ public class Particle3D {
     }
 
     public void destroy() {
-        this.position = null;
-        this.instance = null;
-        this.model = null;
-        this.light = null;
-
+        this.model.dispose();
     }
 }
