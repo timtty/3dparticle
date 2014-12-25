@@ -2,18 +2,17 @@ package staging;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.lights.DirectionalLight;
-import com.badlogic.gdx.graphics.g3d.lights.Lights;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.math.Vector3;
 
 public class Particle3DScene implements ApplicationListener {
     PerspectiveCamera cam;
-    Lights lights;
+    Environment environment;
     ModelBatch modelRenderer;
     ParticleEngine3D engine;
 
@@ -30,9 +29,9 @@ public class Particle3DScene implements ApplicationListener {
         cam.far = 300f;
         cam.update();
 
-        lights = new Lights();
-        lights.ambientLight.set(0.4f, 0.4f, 0.4f, 1f);
-        lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
+        environment = new Environment();
+        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
+        environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
 
         modelRenderer = new ModelBatch();
 
@@ -47,7 +46,7 @@ public class Particle3DScene implements ApplicationListener {
     @Override
     public void render() {
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.4f, 1);
-        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         engine.Update();
         cam.update();
@@ -56,7 +55,7 @@ public class Particle3DScene implements ApplicationListener {
         modelRenderer.begin(cam);
 
         for (Particle3D particle3D: engine.particles) {
-            modelRenderer.render(particle3D.instance, lights);
+            modelRenderer.render(particle3D.instance, environment);
         }
 
         modelRenderer.end();

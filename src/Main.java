@@ -6,8 +6,8 @@ public class Main {
     public static void main(String[] args) {
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
         cfg.title = "GAME";
-        cfg.width = 1600;
-        cfg.height = 900;
+        cfg.width = 320;
+        cfg.height = 240;
 
         new LwjglApplication(new Particle3DSystem(), cfg);
     }

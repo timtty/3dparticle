@@ -2,27 +2,23 @@ package staging;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.lights.DirectionalLight;
-import com.badlogic.gdx.graphics.g3d.lights.Lights;
-import com.badlogic.gdx.graphics.g3d.model.Node;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
-import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Particle3DSystem implements ApplicationListener {
     PerspectiveCamera cam;
     ModelBatch renderer;
     ModelBuilder builder;
-    Lights lights;
+    Environment environment;
     ArrayList<Particle3D> particles;
     int EMITTER_SPEED = 60;
 
@@ -44,9 +40,10 @@ public class Particle3DSystem implements ApplicationListener {
 
         renderer = new ModelBatch();
 
-        lights = new Lights();
-        lights.ambientLight.set(0.4f, 0.4f, 0.4f, 1f);
-        lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
+
+        environment = new Environment();
+        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
+        environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
 
         builder = new ModelBuilder();
         particles = new ArrayList<Particle3D>();
@@ -62,7 +59,7 @@ public class Particle3DSystem implements ApplicationListener {
     @Override
     public void render() {
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         /*
         cam.rotateAround(ORIGIN, cam.up, 1f);
@@ -75,10 +72,10 @@ public class Particle3DSystem implements ApplicationListener {
             if (particle.duration < 5f) {
                 particle.Update();
 
-                lights.add(particle.light);
+                environment.add(particle.light);
 
                 renderer.begin(cam);
-                renderer.render(particle.instance, lights);
+                renderer.render(particle.instance, environment);
                 renderer.end();
             } else {
                 particle.destroy();
@@ -90,11 +87,11 @@ public class Particle3DSystem implements ApplicationListener {
         SIZE = (new Random().nextFloat() / 2);
 
         if (particles.size() < 500) {
-            for (int ii = 0; ii < 22; ii++) {
+            for (int ii = 0; ii < 2; ii++) {
                 particles.add(new Particle3D(ORIGIN, SIZE, builder, shape));
             }
         } else {
-            for (int ii = 0; ii < 16; ii++) {
+            for (int ii = 0; ii < 1; ii++) {
                 particles.add(new Particle3D(ORIGIN, SIZE, builder, shape));
             }
         }

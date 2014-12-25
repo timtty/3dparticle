@@ -2,24 +2,15 @@ package staging;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.loaders.ModelLoader;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.VertexAttributes;
-import com.badlogic.gdx.graphics.g3d.Model;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.lights.DirectionalLight;
-import com.badlogic.gdx.graphics.g3d.lights.Lights;
-import com.badlogic.gdx.graphics.g3d.lights.PointLight;
-import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
-import com.badlogic.gdx.graphics.g3d.materials.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.materials.Material;
+import com.badlogic.gdx.graphics.g3d.*;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.environment.PointLight;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
-
-import java.util.Random;
 
 public class LightsTest implements ApplicationListener {
     PerspectiveCamera cam;
@@ -27,7 +18,7 @@ public class LightsTest implements ApplicationListener {
     Model model;
     ModelInstance modelInstance;
 
-    Lights lights;
+    Environment environment;
 
     final Vector3 origin = new Vector3(0, 0, 0);
 
@@ -42,9 +33,9 @@ public class LightsTest implements ApplicationListener {
 
         batch = new ModelBatch();
 
-        lights = new Lights();
-        lights.ambientLight.set(0.4f, 0.4f, 0.4f, 0.2f);
-        lights.add(new PointLight().set(Color.WHITE, new Vector3(-1f, -1f, -4f), 3f));
+        environment = new Environment();
+        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 0.2f));
+        environment.add(new PointLight().set(Color.WHITE, new Vector3(-1f, -1f, -4f), 3f));
 
         model = new ModelBuilder().createBox(2f, 2f, 2f,
                 new Material(ColorAttribute.createDiffuse(Color.RED)),
@@ -62,10 +53,10 @@ public class LightsTest implements ApplicationListener {
     @Override
     public void render() {
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         batch.begin(cam);
-        batch.render(modelInstance, lights);
+        batch.render(modelInstance, environment);
         batch.end();
 
         /*
