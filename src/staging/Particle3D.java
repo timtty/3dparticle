@@ -32,12 +32,12 @@ public class Particle3D {
     }
 
     public enum SHAPE_TYPES {
-        CUBE, SPHERE, CONE
+        CUBE, SPHERE, CONE, RANDOM
     }
 
     public Vector3 position;
     public ModelInstance instance;
-    private Model model;
+    public Model model;
     public PointLight light = new PointLight();
 
     public Color color;
@@ -58,23 +58,44 @@ public class Particle3D {
     private float ROTATION = 8.83f;
     private final float MAX_ACCELERATION = 1.4f;
     private float ACCELERATION = -0.9f;
-    // private final float SPEED = 0.018f;
     private final float SPEED = 0.018f;
     private Vector3 ORIGIN;
 
+    // trails
+    Trail[] trails;
 
     public Particle3D(Vector3 startPosition, float size, ModelBuilder modelBuilder) {
-        this(startPosition, size, modelBuilder, false);
+        this(startPosition, size, SHAPE_TYPES.RANDOM);
     }
 
-    public Particle3D(Vector3 startPosition, float size, ModelBuilder modelBuilder, SHAPE_TYPES shapeType) {
+    public Particle3D(Vector3 startPosition, float size, SHAPE_TYPES shapeType) {
         position = startPosition;
         ORIGIN = new Vector3(position);
         color = RandomColor.randomColor(false);
         this.shapeType = shapeType;
 
+        if (this.shapeType == SHAPE_TYPES.RANDOM) {
+            int ran = (new Random()).nextInt(3);
+            switch (ran) {
+                case 1:
+                    this.shapeType = SHAPE_TYPES.CUBE;
+                    break;
+                case 2:
+                    this.shapeType = SHAPE_TYPES.SPHERE;
+                    break;
+                case 3:
+                    this.shapeType = SHAPE_TYPES.CONE;
+                    break;
+                default:
+                    this.shapeType = SHAPE_TYPES.SPHERE;
+            }
+        }
+
         //frame3D = (new Random().nextBoolean()) ? FRAME3D.WIRE_FRAME: FRAME3D.SOLID_FRAME;
         frame3D = FRAME3D.SOLID_FRAME;
+        trails = new Trail[9];
+
+        ModelBuilder modelBuilder = new ModelBuilder();
 
         switch (this.shapeType) {
             case CUBE:
@@ -103,48 +124,16 @@ public class Particle3D {
 
     }
 
-    public Particle3D(Vector3 startPosition, float size, ModelBuilder modelBuilder, Boolean randomShapes) {
-        position = startPosition;
-        ORIGIN = new Vector3(position);
-        color = RandomColor.randomColor(false);
-        this.randomShapes = randomShapes;
-
-        //frame3D = (new Random().nextBoolean()) ? FRAME3D.WIRE_FRAME: FRAME3D.SOLID_FRAME;
-        frame3D = FRAME3D.SOLID_FRAME;
-
-        int I = new Random().nextInt(2);
-
-        switch (I) {
-            case 0:
-                model = modelBuilder.createBox(size, size, size,
-                        new Material(ColorAttribute.createDiffuse(color)),
-                        VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
-                break;
-            case 1:
-                model = modelBuilder.createSphere(size, size, size,
-                        18, 18, frame3D.val, new Material(ColorAttribute.createDiffuse(color)),
-                        VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
-                break;
-            case 2:
-                model = modelBuilder.createCone(size, size, size,
-                        18, new Material(ColorAttribute.createDiffuse(color)),
-                        VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
-                break;
-            default:
-                model = modelBuilder.createSphere(size, size, size,
-                        18, 18, frame3D.val, new Material(ColorAttribute.createDiffuse(color)),
-                        VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
-                break;
-        }
-
-        instance = new ModelInstance(model);
-        instance.transform.setToTranslation(position);
-
+    private void slotShift() {
+        System.arraycopy(this.trails, 0, this.trails, 1, trails.length - 1);
     }
 
     public void Update() {
         ACCELERATION += SPEED;
         if (ACCELERATION > MAX_ACCELERATION) ACCELERATION = MAX_ACCELERATION;
+
+        slotShift();
+        this.trails[0] = new Trail(this.instance, this.color);
 
         position = instance.nodes.get(0).translation;
         position.y -= ACCELERATION;

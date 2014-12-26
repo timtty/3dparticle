@@ -4,14 +4,23 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.actions.FloatAction;
+import utils.RandomColor;
+
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Particle3DSystem implements ApplicationListener {
@@ -29,6 +38,43 @@ public class Particle3DSystem implements ApplicationListener {
 
     Logger logger = Logger.getLogger(this.getClass().getName());
 
+    private int flip(int i) {
+        int out = 0;
+        switch (i) {
+            case 0:
+                out = 9;
+                break;
+            case 1:
+                out = 9;
+                break;
+            case 2:
+                out = 8;
+                break;
+            case 3:
+                out = 7;
+                break;
+            case 4:
+                out = 6;
+                break;
+            case 5:
+                out = 5;
+                break;
+            case 6:
+                out = 4;
+                break;
+            case 7:
+                out = 3;
+                break;
+            case 8:
+                out = 2;
+                break;
+            default:
+                out = 1;
+
+        }
+
+        return out;
+    }
 
     public void create() {
         cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -42,13 +88,13 @@ public class Particle3DSystem implements ApplicationListener {
 
 
         environment = new Environment();
-        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
-        environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
+        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.2f, 0.4f, 0.2f, 1f));
+        environment.add(new DirectionalLight().set(12f, 12f, 12f, -0.1f, -0.1f, -3f));
 
         builder = new ModelBuilder();
         particles = new ArrayList<Particle3D>();
 
-        particles.add(new Particle3D(ORIGIN, SIZE, builder, Particle3D.SHAPE_TYPES.SPHERE));
+        particles.add(new Particle3D(ORIGIN, SIZE, shape));
     }
 
     @Override
@@ -74,6 +120,16 @@ public class Particle3DSystem implements ApplicationListener {
 
                 renderer.begin(cam);
                 renderer.render(particles.get(i).instance, environment);
+
+                for (int ii = 0; ii < particles.get(i).trails.length; ii++) {
+                    Trail trail = particles.get(i).trails[ii];
+                    if (trail != null) {
+                        Float alpha = (flip(ii) * 0.1f);
+                        trail.trail.materials.get(0).set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA, alpha));
+                        renderer.render(trail.trail, environment);
+                    }
+                }
+
                 renderer.end();
             } else {
                 particles.get(i).destroy();
@@ -81,15 +137,15 @@ public class Particle3DSystem implements ApplicationListener {
             }
         }
 
-        SIZE = (new Random().nextFloat() / 2);
+        SIZE = (new Random().nextFloat() / 4);
 
-        if (particles.size() < 500) {
-            for (int ii = 0; ii < 30; ii++) {
-                particles.add(new Particle3D(ORIGIN, SIZE, builder, shape));
+        if (particles.size() < 1500) {
+            for (int ii = 0; ii < 20; ii++) {
+                particles.add(new Particle3D(ORIGIN, SIZE, shape));
             }
         } else {
-            for (int ii = 0; ii < 20; ii++) {
-                particles.add(new Particle3D(ORIGIN, SIZE, builder, shape));
+            for (int ii = 0; ii < 10; ii++) {
+                particles.add(new Particle3D(ORIGIN, SIZE, shape));
             }
         }
 
@@ -98,7 +154,7 @@ public class Particle3DSystem implements ApplicationListener {
         if (EMITTER_SPEED < 0) EMITTER_SPEED = 0; if (EMITTER_SPEED > 100) EMITTER_SPEED = 100;
         */
 
-        // logger.log(Level.INFO, "Number of particles: " + particles.size());
+        logger.log(Level.INFO, "" + particles.size());
 
     }
 
@@ -120,4 +176,5 @@ public class Particle3DSystem implements ApplicationListener {
             instance.instance.model.dispose();
         }
     }
+
 }
