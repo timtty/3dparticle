@@ -78,7 +78,7 @@ public class Particle3DSystem implements ApplicationListener {
 
     public void create() {
         cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        cam.position.set(0, 0, 30f);
+        cam.position.set(0, 0, 22f);
         cam.lookAt(ORIGIN);
         cam.near = 0.1f;
         cam.far = 300f;
@@ -124,7 +124,7 @@ public class Particle3DSystem implements ApplicationListener {
                 for (int ii = 0; ii < particles.get(i).trails.length; ii++) {
                     Trail trail = particles.get(i).trails[ii];
                     if (trail != null) {
-                        Float alpha = (flip(ii) * 0.1f);
+                        Float alpha = (flip(ii) * 0.06f);
                         trail.trail.materials.get(0).set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA, alpha));
                         renderer.render(trail.trail, environment);
                     }
