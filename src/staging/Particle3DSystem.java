@@ -34,7 +34,7 @@ public class Particle3DSystem implements ApplicationListener {
     final Vector3 ORIGIN = new Vector3(0, 0, 0);
     float SIZE = 0.93f;
 
-    final Particle3D.SHAPE_TYPES shape = Particle3D.SHAPE_TYPES.SPHERE;
+    final Particle3D.SHAPE_TYPES shape = Particle3D.SHAPE_TYPES.RANDOM;
 
     Logger logger = Logger.getLogger(this.getClass().getName());
 
@@ -137,14 +137,14 @@ public class Particle3DSystem implements ApplicationListener {
             }
         }
 
-        SIZE = (new Random().nextFloat() / 4);
+        SIZE = (new Random().nextFloat() * 0.4f);
 
         if (particles.size() < 1500) {
             for (int ii = 0; ii < 20; ii++) {
                 particles.add(new Particle3D(ORIGIN, SIZE, shape));
             }
         } else {
-            for (int ii = 0; ii < 10; ii++) {
+            for (int ii = 0; ii < 14; ii++) {
                 particles.add(new Particle3D(ORIGIN, SIZE, shape));
             }
         }

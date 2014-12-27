@@ -32,7 +32,7 @@ public class Particle3D {
     }
 
     public enum SHAPE_TYPES {
-        CUBE, SPHERE, CONE, RANDOM
+        CUBE, SPHERE, CONE, PILL, RANDOM
     }
 
     public Vector3 position;
@@ -75,7 +75,7 @@ public class Particle3D {
         this.shapeType = shapeType;
 
         if (this.shapeType == SHAPE_TYPES.RANDOM) {
-            int ran = (new Random()).nextInt(3);
+            int ran = (new Random()).nextInt(4);
             switch (ran) {
                 case 1:
                     this.shapeType = SHAPE_TYPES.CUBE;
@@ -85,6 +85,9 @@ public class Particle3D {
                     break;
                 case 3:
                     this.shapeType = SHAPE_TYPES.CONE;
+                    break;
+                case 4:
+                    this.shapeType = SHAPE_TYPES.PILL;
                     break;
                 default:
                     this.shapeType = SHAPE_TYPES.SPHERE;
@@ -110,6 +113,11 @@ public class Particle3D {
                 break;
             case CONE:
                 model = modelBuilder.createCone(size, size, size, 18,
+                        new Material(ColorAttribute.createDiffuse(color)),
+                        VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+                break;
+            case PILL:
+                model = modelBuilder.createCapsule(size, (size * 6.2f), 18,
                         new Material(ColorAttribute.createDiffuse(color)),
                         VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
                 break;
