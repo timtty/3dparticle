@@ -1,5 +1,6 @@
 package staging;
 
+import com.badlogic.gdx.assets.loaders.ModelLoader;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.Material;
@@ -7,6 +8,7 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.PointLight;
+import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 import utils.RandomColor;
@@ -57,7 +59,7 @@ public class Particle3D {
     private float _ROTATION = (new Random().nextFloat() * 1f);
     private float ROTATION = 8.83f;
     private final float MAX_ACCELERATION = 1.4f;
-    private float ACCELERATION = -0.9f;
+    private float ACCELERATION = -0.45f;
     private final float SPEED = 0.018f;
     private Vector3 ORIGIN;
 
