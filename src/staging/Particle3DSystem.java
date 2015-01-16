@@ -32,11 +32,12 @@ public class Particle3DSystem implements ApplicationListener {
     int EMITTER_SPEED = 60;
 
     final Vector3 ORIGIN = new Vector3(0, 0, 0);
-    float SIZE = 0.93f;
+    float SIZE = 0.23f;
 
-    final Particle3D.SHAPE_TYPES shape = Particle3D.SHAPE_TYPES.RANDOM;
+    final Particle3D.SHAPE_TYPES shape = Particle3D.SHAPE_TYPES.SPHERE;
 
     Logger logger = Logger.getLogger(this.getClass().getName());
+    int log_vector = 0;
 
     private int flip(int i) {
         int out = 0;
@@ -113,24 +114,27 @@ public class Particle3DSystem implements ApplicationListener {
         */
 
         for (int i = 0; i < particles.size(); i++) {
-            if (particles.get(i).duration < 5f) {
+            if (particles.get(i).duration < 3.2f) {
                 particles.get(i).Update();
 
                 //environment.add(particle.light);
 
-                renderer.begin(cam);
-                renderer.render(particles.get(i).instance, environment);
+                if (particles.get(i).duration > 0.8f) {
+                    renderer.begin(cam);
+                    renderer.render(particles.get(i).instance, environment);
 
-                for (int ii = 0; ii < particles.get(i).trails.length; ii++) {
-                    Trail trail = particles.get(i).trails[ii];
-                    if (trail != null) {
-                        Float alpha = (flip(ii) * 0.06f);
-                        trail.trail.materials.get(0).set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA, alpha));
-                        renderer.render(trail.trail, environment);
+                    for (int ii = 0; ii < particles.get(i).trails.length; ii++) {
+                        Trail trail = particles.get(i).trails[ii];
+                        if (trail != null) {
+                            Float alpha = (flip(ii) * 0.06f);
+                            trail.trail.materials.get(0).set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA, alpha));
+                            renderer.render(trail.trail, environment);
+                        }
                     }
+
+                    renderer.end();
                 }
 
-                renderer.end();
             } else {
                 particles.get(i).destroy();
                 particles.remove(i);
@@ -139,12 +143,12 @@ public class Particle3DSystem implements ApplicationListener {
 
         SIZE = (new Random().nextFloat() * 0.4f);
 
-        if (particles.size() < 1500) {
-            for (int ii = 0; ii < 20; ii++) {
+        if (particles.size() < 400) {
+            for (int ii = 0; ii < 12; ii++) {
                 particles.add(new Particle3D(ORIGIN, SIZE, shape));
             }
         } else {
-            for (int ii = 0; ii < 14; ii++) {
+            for (int ii = 0; ii < 4; ii++) {
                 particles.add(new Particle3D(ORIGIN, SIZE, shape));
             }
         }
@@ -154,7 +158,12 @@ public class Particle3DSystem implements ApplicationListener {
         if (EMITTER_SPEED < 0) EMITTER_SPEED = 0; if (EMITTER_SPEED > 100) EMITTER_SPEED = 100;
         */
 
-        logger.log(Level.INFO, "" + particles.size());
+        if (this.log_vector == 20) {
+            logger.log(Level.INFO, "" + particles.size());
+            this.log_vector = 0;
+        } else {
+            this.log_vector++;
+        }
 
     }
 
